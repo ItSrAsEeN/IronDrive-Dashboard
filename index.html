@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IronDrive Dashboard</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    h1 {
+      border-bottom: 2px solid #00ff00;
+      padding-bottom: 10px;
+    }
+    .log-entry {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #00ff00;
+      background-color: #111;
+    }
+    .timestamp {
+      font-size: 0.9em;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>IronDrive - Live Dashboard</h1>
+  <div id="logs"></div>
+
+  <script>
+    // Replace this with your actual Google Sheets JSON endpoint or Firebase fetch call
+    const sampleLogs = [
+      {
+        timestamp: '2025-04-09 14:22:11',
+        hostname: 'DESKTOP-22A1X',
+        ip: '192.168.1.105',
+        os: 'Windows 11',
+        scan: 'Open Ports: 21, 445',
+        encryption: 'Triggered'
+      },
+      {
+        timestamp: '2025-04-09 14:25:43',
+        hostname: 'USER-PC',
+        ip: '192.168.1.118',
+        os: 'Windows 10',
+        scan: 'Open Ports: 80, 139',
+        encryption: 'Not Triggered'
+      }
+    ];
+
+    function renderLogs(logs) {
+      const logsContainer = document.getElementById("logs");
+      logsContainer.innerHTML = "";
+      logs.forEach(log => {
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        entry.innerHTML = `
+          <div class="timestamp">${log.timestamp}</div>
+          <div><strong>Host:</strong> ${log.hostname}</div>
+          <div><strong>IP:</strong> ${log.ip}</div>
+          <div><strong>OS:</strong> ${log.os}</div>
+          <div><strong>Scan:</strong> ${log.scan}</div>
+          <div><strong>Encryption:</strong> ${log.encryption}</div>
+        `;
+        logsContainer.appendChild(entry);
+      });
+    }
+
+    // Simulate loading
+    document.addEventListener("DOMContentLoaded", () => {
+      renderLogs(sampleLogs); // Later replace this with fetch to live data
+    });
+  </script>
+</body>
+</html>
