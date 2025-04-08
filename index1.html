@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IronDrive | Hacker Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #0d0d0d;
+      color: #00ff00;
+      overflow-x: hidden;
+    }
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #00ff00;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      letter-spacing: 2px;
+      color: #00ff00;
+    }
+    #charts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      padding: 30px;
+    }
+    canvas {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border: 1px solid #00ff00;
+      border-radius: 10px;
+    }
+    #logs {
+      padding: 20px 40px;
+    }
+    .log-entry {
+      padding: 15px;
+      background-color: #1a1a1a;
+      border-left: 5px solid #00ff00;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px #00ff0033;
+    }
+    .timestamp {
+      font-size: 0.9em;
+      color: #0f0;
+    }
+    .info {
+      margin-top: 5px;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      color: #0f0;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>☣ IronDrive Hacker Dashboard ☣</h1>
+  </header>
+
+  <section id="charts">
+    <canvas id="scanChart" width="400" height="200"></canvas>
+    <canvas id="encryptionChart" width="400" height="200"></canvas>
+  </section>
+
+  <div id="logs"></div>
+
+  <div class="footer">Live Monitoring • IronDrive Project • 2025</div>
+
+  <script>
+    const logs = [
+      {
+        timestamp: '2025-04-09 14:22:11',
+        hostname: 'DESKTOP-22A1X',
+        ip: '192.168.1.105',
+        os: 'Windows 11',
+        scan: 'Open Ports: 21, 445, 139',
+        encryption: 'Triggered'
+      },
+      {
+        timestamp: '2025-04-09 14:25:43',
+        hostname: 'LAPTOP-R4J9T',
+        ip: '192.168.1.110',
+        os: 'Windows 10',
+        scan: 'Open Ports: 80, 139',
+        encryption: 'Skipped'
+      },
+      {
+        timestamp: '2025-04-09 14:30:02',
+        hostname: 'PC-ALPHA',
+        ip: '192.168.1.115',
+        os: 'Windows 11',
+        scan: 'Open Ports: 445, 139',
+        encryption: 'Triggered'
+      }
+    ];
+
+    function renderLogs(logs) {
+      const logsContainer = document.getElementById("logs");
+      logs.forEach(log => {
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        entry.innerHTML = `
+          <div class="timestamp">🕒 ${log.timestamp}</div>
+          <div class="info">Host: ${log.hostname}</div>
+          <div class="info">IP: ${log.ip}</div>
+          <div class="info">OS: ${log.os}</div>
+          <div class="info">Scan: ${log.scan}</div>
+          <div class="info">Encryption: ${log.encryption}</div>
+        `;
+        logsContainer.appendChild(entry);
+      });
+    }
+
+    function generateCharts(logs) {
+      const encryptionStats = logs.reduce((acc, log) => {
+        acc[log.encryption] = (acc[log.encryption] || 0) + 1;
+        return acc;
+      }, {});
+
+      const scanCounts = {};
+      logs.forEach(log => {
+        const ports = log.scan.match(/\d+/g);
+        if (ports) ports.forEach(port => scanCounts[port] = (scanCounts[port] || 0) + 1);
+      });
+
+      new Chart(document.getElementById('encryptionChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+          labels: Object.keys(encryptionStats),
+          datasets: [{
+            data: Object.values(encryptionStats),
+            backgroundColor: ['#00ff00', '#ff0000']
+          }]
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Encryption Status'
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('scanChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(scanCounts),
+          datasets: [{
+            label: 'Port Frequency',
+            data: Object.values(scanCounts),
+            backgroundColor: '#00ff00'
+          }]
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Open Ports Detected'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#0f0'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#0f0'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderLogs(logs);
+      generateCharts(logs);
+    });
+  </script>
+</body>
+</html>
